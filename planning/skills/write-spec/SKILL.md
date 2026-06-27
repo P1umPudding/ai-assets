@@ -96,8 +96,13 @@ graded against — vague criteria are a bug.
 
 ### 4. Write the spec
 
-Fill in `references/spec-template.md` and write it to the output path. Two parts
-are non-negotiable:
+Fill in `references/spec-template.md` and write it to the output path. **Size each
+section to the work — there is no length cap.** A large feature may need Goal,
+Non-goals, Context, and Requirements that each run to many paragraphs with their
+own sub-headings (a 1000-line spec is fine if the feature warrants it); a small
+change stays terse. Add as much sub-structure as the content needs — what matters
+is that it stays readable and self-contained, not short. Two parts are
+non-negotiable:
 
 - A **Verification Plan** with *concrete, executable* steps for THIS environment
   (real commands; for a UI, real Chrome-MCP navigation + assertions; for a CLI,
@@ -122,8 +127,13 @@ gets verified).
 
 ## Hard rules
 
-- **Never implement.** If the user wants you to build, that's a separate step —
-  point them at the spec's Implementation Workflow.
+- **Inspect, don't implement.** Read and verify the existing code as much as you
+  need to ground the spec — confirm that files, APIs, components, and patterns
+  actually exist and understand how they work. But write no production code, and
+  do **not** pre-write the implementer's plan: no file-by-file or
+  function-by-function code plan. The spec defines WHAT and the acceptance
+  criteria; deciding the exact code-level HOW is the implementer's job
+  (Implementation Workflow, step 1). If the user wants to build, point them there.
 - **Never invent** commands, paths, components, or test tooling. If you didn't
   confirm it exists in Orient, don't put it in the spec.
 - **The spec must be self-contained.** Assume the implementer gets only this file.

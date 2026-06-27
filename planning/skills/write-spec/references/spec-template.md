@@ -5,6 +5,11 @@ If a past spec in this repo set a format, match it instead and only borrow the
 **Implementation Workflow** section below verbatim. The finished file is the only
 context the implementing agent gets, so keep it self-contained.
 
+**Sections scale with the work — there is no length cap.** Goal, Non-goals,
+Context, and Requirements can each grow to many paragraphs with their own
+sub-headings (`###`) for a large spec, or stay a few lines for a small one. Add
+sub-structure freely; the only rule is that it stays readable and self-contained.
+
 ---
 
 # Spec — <Feature / Project name>
@@ -14,7 +19,8 @@ context the implementing agent gets, so keep it self-contained.
 ## Goal
 
 (The real outcome the user wants — the problem behind the request, not just the
-asked-for solution.)
+asked-for solution. For a large spec, split this into `###` sub-sections —
+e.g. background, motivation, target users, the vision of "done".)
 
 ## Non-goals
 

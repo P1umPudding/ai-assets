@@ -26,8 +26,13 @@ verify its own work. **You do not implement.** Your only deliverable is the spec
   Give your recommended answer/default first, then alternatives, and **always**
   let the user type a custom answer or add extra context. If a question can be
   answered by reading the codebase, read the codebase instead of asking.
-- **One thing at a time.** Don't dump a wall of questions. Walk the decision tree;
-  resolve dependencies between decisions one by one.
+- **Batch related questions; sequence dependent ones.** When the platform has a
+  structured multi-question UI (Claude Code: AskUserQuestion, up to ~4 at once),
+  use it — asking several questions together is good, *especially* when they
+  belong to the same topic, because the user can step through them in order. What
+  to avoid is an unstructured wall of free-text questions. When one decision
+  genuinely depends on the answer to another, ask the first, then follow up — don't
+  ask a question whose answer an earlier, still-open one would settle.
 - **Lock key decisions explicitly.** Before writing, replay the decisions you've
   settled and have the user confirm them, so nothing is silently assumed.
 - **Be concrete; decide now, don't defer.** Everything that's been decided goes
@@ -77,10 +82,11 @@ real. Do **not** ask the user what you can find out yourself:
 Then state, in 3–5 lines, what you found (stack, test/verify options, format
 you'll match, target path) before interviewing.
 
-### 2. Interview — one focused question at a time
+### 2. Interview — structured, recommendation-led questions
 
-Use the platform's structured-question UI when available. In Claude Code use
-**AskUserQuestion**: put your recommended option **first**, suffixed
+Use the platform's structured-question UI when available, and prefer grouping
+related questions into one ask. In Claude Code use **AskUserQuestion** (up to ~4
+questions at once): put your recommended option **first**, suffixed
 `(recommended)`; it already gives the user an *Other* free-text + notes field, so
 the "custom answer / add info" path is always present. Outside Claude Code, ask in
 prose: state your recommendation, give alternatives, invite a custom answer.

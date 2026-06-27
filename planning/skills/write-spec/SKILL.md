@@ -115,7 +115,8 @@ confirm or correct them.
 
 ### 3. Define precise success criteria
 
-Turn the agreed behavior into a **numbered list of acceptance criteria**, each one
+Turn the agreed behavior into a **checklist of acceptance criteria** (the `- [ ]`
+form the template uses, labelled AC1, AC2, …), each one
 independently checkable (binary pass/fail) and tied, where possible, to a concrete
 verification (a test, a command, a Chrome-MCP assertion). If a past spec set a
 criteria format, match it. These criteria are the contract the implementer is
@@ -127,8 +128,8 @@ Write the spec to the output path using `references/spec-template.md` as the
 structure. **Everything in that template above the first `---` divider is guidance
 for you, the author — do not copy it into the spec.** The spec itself starts at the
 `# Spec — <name>` heading. Name the file after the feature in kebab-case (e.g.
-`dark-mode-toggle.md`). Copy the `## Implementation Workflow` section and everything
-under it **verbatim**; fill in and clean every section above it (drop the
+`dark-mode-toggle.md`). Copy the `## Implementation Workflow` section — its heading
+through the end of the file — **verbatim**; fill in and clean every section above it (drop the
 parenthetical hints and any unused `<…>` placeholders). If you instead match a past
 spec's format (per Orient), you must still emit sections literally titled
 **Acceptance criteria** and **Verification plan** and keep the Implementation
@@ -142,7 +143,7 @@ change stays terse. Add as much sub-structure as the content needs — what matt
 is that it stays readable and self-contained, not short. Two parts are
 non-negotiable:
 
-- A **Verification Plan** with *concrete, executable* steps for THIS environment
+- A **Verification plan** with *concrete, executable* steps for THIS environment
   (real commands; for a UI, real Chrome-MCP navigation + assertions; for a CLI,
   real invocations + expected output). No generic placeholders.
 - The **Implementation Workflow** section, embedded verbatim from the template, so
@@ -179,10 +180,12 @@ gets verified).
   something about the *current* codebase you didn't verify in Orient — existing
   commands, paths, components, or test tooling. But you absolutely *may* invent
   and propose *new* things the feature needs (a new component, command, endpoint,
-  or approach). When you do: confirm the shape with the user, then write it into
-  the spec concretely — name, behavior, interface, defaults — so the implementer
-  builds what you specified instead of re-deciding it. Just keep the two visibly
-  separate: what already exists vs. what this spec introduces.
+  or user-facing approach). Confirm anything user-facing or architectural with the
+  user — fold it into the locked-decisions replay rather than asking per item — and
+  decide purely-internal approaches yourself. Then write it into the spec
+  concretely — name, behavior, interface, defaults — so the implementer builds what
+  you specified instead of re-deciding it. Just keep the two visibly separate: what
+  already exists vs. what this spec introduces.
 - **Self-contained for every decision.** The reader must be able to act without
   having seen *this conversation* — every decision lives in the spec. You may
   reference repo files the implementer can open (e.g. `CLAUDE.md`), but any rule

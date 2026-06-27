@@ -1,9 +1,16 @@
 # Spec template
 
+**Everything above the `---` divider below is instructions for you, the spec
+author — do not copy it into the generated spec. The spec itself starts at the
+`# Spec — <name>` heading.**
+
 Fill every section. Delete the parenthetical hints. Replace `<…>` placeholders.
 If a past spec in this repo set a format, match it instead and only borrow the
-**Implementation Workflow** section below verbatim. The finished file is the only
-context the implementing agent gets, so keep it self-contained.
+**Implementation Workflow** section below verbatim — but keep sections literally
+titled **Acceptance criteria** and **Verification plan**, and keep the
+Implementation Workflow last, since its steps reference those by name and position.
+The finished file is the only context the implementing agent gets from this
+conversation, so keep every decision in it.
 
 **Sections scale with the work — there is no length cap.** Goal, Non-goals,
 Context, and Requirements can each grow to many paragraphs with their own
@@ -37,9 +44,10 @@ e.g. background, motivation, target users, the vision of "done".)
 
 ## Context
 
-(What exists today, where this plugs in, relevant files/modules, and the project
-conventions that apply — link `CLAUDE.md`/`AGENTS.md` rules the implementer must
-follow, e.g. UI component library, styling rules.)
+(What exists today, where this plugs in, relevant files/modules. **Copy in** the
+project conventions that bind this work — don't just link them — e.g. "use
+`@postxl/ui-components`; no inline styles" — so the implementer can't miss them.
+You may additionally point to `CLAUDE.md`/`AGENTS.md` for the full rules.)
 
 ## Requirements
 
@@ -57,7 +65,9 @@ design tokens, error handling. Only list what's real.)
 
 ### Data / contracts
 
-(APIs, schemas, files, state touched. Message shapes, types, endpoints.)
+(Specify the *contract* fully — APIs, schemas, files/state touched, message shapes,
+types, endpoints, public signatures. Leave the internal call sequence and file
+layout to the implementer.)
 
 ## Edge cases & failure behavior
 
@@ -111,8 +121,10 @@ subagent** for each review so it brings unbiased eyes.
    to step 3.
 7. **Practical verification.** Run the **Verification plan** above for real —
    tests, build, CLI, or Chrome MCP as applicable. Capture the evidence (output,
-   screenshots, assertions).
-8. **Final independent check.** Dispatch a fresh agent to check the finished
-   result against this spec end to end. Fix anything it surfaces.
+   screenshots, assertions). If anything fails, return to step 3.
+8. **Final independent check.** Dispatch a fresh agent — one that has **not** taken
+   part in any prior step — to check the finished result against this spec end to
+   end (the second-pair-of-eyes gate). Fix anything it surfaces, then re-run the
+   relevant verification.
 9. **Done.** Only when every acceptance criterion is ✅, verification is green, and
    the final check passed. Report with evidence — no unverified "it works" claims.

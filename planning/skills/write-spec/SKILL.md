@@ -1,6 +1,6 @@
 ---
 name: write-spec
-description: "Interview the user to uncover the real goal, then write a self-contained spec sheet for a feature/project/change — requirements, precise acceptance criteria, and an embedded implement-and-verify workflow that a fresh agent can execute end to end. Use when the user wants to specify something before building, or says 'write a spec', 'spec this out', 'schreib ein spec', or '/write-spec'. This skill ONLY writes the spec; it never implements."
+description: "Interviews the user to uncover the real goal, then writes a self-contained spec sheet for a feature/project/change — requirements, precise acceptance criteria, and an embedded implement-and-verify workflow that a fresh agent can execute end to end. Use when the user wants to specify something before building, or says 'write a spec', 'spec this out', 'schreib ein spec', or '/write-spec'. This skill ONLY writes the spec; it never implements."
 license: MIT
 metadata:
   author: plumpudding
@@ -8,8 +8,8 @@ metadata:
   source: ORIGINAL
   tags: [spec, planning, requirements, interview, workflow, acceptance-criteria]
   keywords: [write-spec, spec, specification, requirements, plan, interview, criteria]
-  reads_from: ["the current codebase / environment"]
-  writes_to: ["specs/<name>.md (auto-detects an existing convention first)"]
+  reads_from: ["references/spec-template.md"]
+  writes_to: ["specs/<name>.md"]
 ---
 
 # Write Spec
@@ -22,10 +22,11 @@ verify its own work. **You do not implement.** Your only deliverable is the spec
 
 - **Find the real goal, not the stated solution.** Interview past the surface
   request. People ask for a solution; spec the underlying need.
-- **Every question leads with a recommendation.** Never ask an open question.
-  Give your recommended answer/default first, then alternatives, and **always**
-  let the user type a custom answer or add extra context. If a question can be
-  answered by reading the codebase, read the codebase instead of asking.
+- **Every question leads with a recommendation.** Never ask an open question
+  (the one exception is the opening "what do you want built?" if the user hasn't
+  said yet). Give your recommended answer/default first, then alternatives, and
+  **always** let the user type a custom answer or add extra context. If a question
+  can be answered by reading the codebase, read the codebase instead of asking.
 - **Batch related questions; sequence dependent ones.** When the platform has a
   structured multi-question UI (Claude Code: AskUserQuestion, up to ~4 at once),
   use it — asking several questions together is good, *especially* when they
@@ -122,8 +123,19 @@ graded against — vague criteria are a bug.
 
 ### 4. Write the spec
 
-Fill in `references/spec-template.md` and write it to the output path. **Size each
-section to the work — there is no length cap.** A large feature may need Goal,
+Write the spec to the output path using `references/spec-template.md` as the
+structure. **Everything in that template above the first `---` divider is guidance
+for you, the author — do not copy it into the spec.** The spec itself starts at the
+`# Spec — <name>` heading. Name the file after the feature in kebab-case (e.g.
+`dark-mode-toggle.md`). Copy the `## Implementation Workflow` section and everything
+under it **verbatim**; fill in and clean every section above it (drop the
+parenthetical hints and any unused `<…>` placeholders). If you instead match a past
+spec's format (per Orient), you must still emit sections literally titled
+**Acceptance criteria** and **Verification plan** and keep the Implementation
+Workflow as the final section — its steps reference those sections by name and
+position.
+
+**Size each section to the work — there is no length cap.** A large feature may need Goal,
 Non-goals, Context, and Requirements that each run to many paragraphs with their
 own sub-headings (a 1000-line spec is fine if the feature warrants it); a small
 change stays terse. Add as much sub-structure as the content needs — what matters
@@ -160,6 +172,9 @@ gets verified).
   function-by-function code plan. The spec defines WHAT and the acceptance
   criteria; deciding the exact code-level HOW is the implementer's job
   (Implementation Workflow, step 1). If the user wants to build, point them there.
+  Boundary: specify *interfaces and contracts* fully (message shapes, types,
+  endpoints, public signatures) — those are part of WHAT — but leave the *internal*
+  mechanics (call sequence, file layout, helper breakdown) to the implementer.
 - **Don't fabricate what exists; do design what's new.** Never state as fact
   something about the *current* codebase you didn't verify in Orient — existing
   commands, paths, components, or test tooling. But you absolutely *may* invent
@@ -168,4 +183,8 @@ gets verified).
   the spec concretely — name, behavior, interface, defaults — so the implementer
   builds what you specified instead of re-deciding it. Just keep the two visibly
   separate: what already exists vs. what this spec introduces.
-- **The spec must be self-contained.** Assume the implementer gets only this file.
+- **Self-contained for every decision.** The reader must be able to act without
+  having seen *this conversation* — every decision lives in the spec. You may
+  reference repo files the implementer can open (e.g. `CLAUDE.md`), but any rule
+  that's load-bearing for this work must be **copied into the spec**, not just
+  linked, so it can't be missed.

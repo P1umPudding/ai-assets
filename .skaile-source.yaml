@@ -1,0 +1,11 @@
+# Asset Source configuration for this repo.
+#
+# Compatibility sidecar for older skaile tooling. The canonical publisher lives
+# in skaile.yaml (`publisher: plumpudding`); this file just declares the default
+# ref and sync trigger so a registered source knows how to index the repo.
+
+version: 1
+publisher_default: '@plumpudding'
+default_ref: main
+sync:
+  trigger: webhook

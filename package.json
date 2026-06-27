@@ -1,0 +1,10 @@
+{
+  "name": "@plumpudding/ai-assets",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Personal AI agent skills, domains, agents, and shared resources — published to skaile.store",
+  "scripts": {
+    "scaffold:domain": "uv run scripts/scaffold_domain.py",
+    "scaffold:skill": "uv run scripts/scaffold_skill.py"
+  }
+}

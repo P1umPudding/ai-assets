@@ -1,0 +1,4 @@
+name: general
+description: General-purpose personal skills and assets
+dependencies:
+  - skill:example-skill

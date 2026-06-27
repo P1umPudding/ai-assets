@@ -1,0 +1,24 @@
+# skaile.yaml — publication manifest for github.com/P1umPudding/ai-assets
+#
+# Declares THE canonical publisher for every asset shipped from this repo.
+# Consumers that resolve `<kind>:<name>@plumpudding` end up here.
+#
+# Version is omitted on purpose: the resolver derives it from `git describe
+# --tags`. Cut a new git tag (e.g. `git tag v0.2.0`) to publish a new version
+# of every asset in this repo at once. A single asset may override the repo-wide
+# version via `metadata.version:` in its SKILL.md.
+
+publisher: plumpudding
+
+# `assets:` locks the canonical identity of listed assets even if the directory
+# layout later drifts. Anything NOT listed here is still discovered automatically
+# by the agentskills.io filename convention (`<domain>/skills/<name>/SKILL.md`,
+# `<domain>/<domain>.bundle.yaml`) — so you don't have to register every skill.
+# Add an entry here only when you want an asset's identity pinned.
+assets:
+  # ── general ───────────────────────────────────────────────────────────────
+  - { kind: skill,  name: example-skill, root: general/skills/example-skill }
+  - { kind: bundle, name: general, root: general, files: [general.bundle.yaml] }
+
+  # Add new domains/skills above. Or just drop a SKILL.md under
+  # <domain>/skills/<name>/ and let auto-discovery pick it up.

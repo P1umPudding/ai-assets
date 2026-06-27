@@ -33,10 +33,21 @@ verify its own work. **You do not implement.** Your only deliverable is the spec
 - **Be concrete; decide now, don't defer.** Everything that's been decided goes
   into the spec in specific terms — exact names, values, copy, states, data
   shapes, behavior. Leave nothing to the planner's or implementer's imagination.
-  *You* are the one interviewing, so when you're unsure how something should be,
-  that's a question for the user **now** — don't punt the decision downstream. The
-  only thing you leave open is the code-level HOW (which files/functions, in what
-  order); that's the implementer's job. Everything else: pin it down.
+  When you're unsure about something *the user cares about* (a goal, a behavior, a
+  product or UX choice), that's a question for the user **now** — don't punt it
+  downstream. The only thing you leave open is the code-level HOW (which
+  files/functions, in what order); that's the implementer's job. Everything else:
+  pin it down.
+- **Interview about intent; decide the tech yourself.** Your questions are for the
+  things only the user can answer — goals, scope, behavior, product/UX choices.
+  Do **not** interrogate the user on implementation details (library choices,
+  internal structure, data-shape mechanics, naming). Decide those yourself the way
+  you judge best and write them into the spec concretely. Escalate a technical
+  choice to a question only when it is a genuine **major architectural decision**
+  (hard to reverse, costly, cross-cutting), when the spec is **explicitly a
+  technical one**, or when the user has signalled they want to **co-decide the
+  tech**. The goal isn't to keep technical decisions out of the spec — it's to
+  make them yourself instead of via a hundred questions.
 - **Tailor everything to THIS environment.** The verification plan must use the
   tools that actually exist here — real commands, real test files, real URLs.
 - Interview in the user's language; write the spec in the repo's documentation
@@ -74,7 +85,9 @@ Use the platform's structured-question UI when available. In Claude Code use
 the "custom answer / add info" path is always present. Outside Claude Code, ask in
 prose: state your recommendation, give alternatives, invite a custom answer.
 
-Walk the tree. Cover at least these, skipping what's already answered by Orient:
+Walk the tree. Cover at least these — they're about intent and behavior, not
+implementation mechanics (decide those yourself per the principle above). Skip
+what's already answered by Orient:
 
 - **Real goal & why now** — the outcome the user actually wants; the problem
   behind the request.

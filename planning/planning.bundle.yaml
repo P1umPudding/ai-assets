@@ -1,0 +1,4 @@
+name: planning
+description: Skills for turning a vague idea into a spec/plan a fresh agent can build
+dependencies:
+  - skill:write-spec

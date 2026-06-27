@@ -20,5 +20,9 @@ assets:
   - { kind: skill,  name: example-skill, root: general/skills/example-skill }
   - { kind: bundle, name: general, root: general, files: [general.bundle.yaml] }
 
+  # ── planning ──────────────────────────────────────────────────────────────
+  - { kind: skill,  name: write-spec, root: planning/skills/write-spec }
+  - { kind: bundle, name: planning, root: planning, files: [planning.bundle.yaml] }
+
   # Add new domains/skills above. Or just drop a SKILL.md under
   # <domain>/skills/<name>/ and let auto-discovery pick it up.

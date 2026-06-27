@@ -65,17 +65,18 @@ MAIN="$(git -C "$REPO_ROOT" symbolic-ref --quiet --short refs/remotes/origin/HEA
 [ -z "$MAIN" ] && { git -C "$REPO_ROOT" show-ref --verify -q refs/heads/master && MAIN=master; }
 MAIN="${MAIN:-main}"
 
-# "Since you were last active" = your most recent commit on any branch
-ANCHOR="$(git -C "$REPO_ROOT" log --all --author="$EMAIL" -1 --format=%cI 2>/dev/null)"
-[ -z "$ANCHOR" ] && ANCHOR="$(date -d '48 hours ago' -Iseconds 2>/dev/null)"
+# "Since you were last active" = your most recent commit on any branch.
+# Guard an unset email (--author="" would match everyone → anchor = today),
+# and use a portable 48h fallback (BSD `date -v` then GNU `date -d`).
+ANCHOR=""
+[ -n "$EMAIL" ] && ANCHOR="$(git -C "$REPO_ROOT" log --all --author="$EMAIL" -1 --format=%cI 2>/dev/null)"
+[ -z "$ANCHOR" ] && ANCHOR="$(date -u -v-48H +%Y-%m-%dT%H:%M:%SZ 2>/dev/null || date -u -d '48 hours ago' +%Y-%m-%dT%H:%M:%SZ 2>/dev/null)"
 
 # Is the tree clean? (decides whether pulls / auto-switch are safe)
 DIRTY="$(git -C "$REPO_ROOT" status --porcelain)"
 ```
 
 Keep `REPO_ROOT`, `BRANCH`, `MAIN`, `EMAIL`, `NAME`, `ANCHOR`, `DIRTY` for later.
-If `origin/HEAD` is unset, the first `git fetch` (next step) often populates it;
-re-resolve `MAIN` after fetching if it fell back.
 
 ### 2. Fetch
 
@@ -95,7 +96,13 @@ BR_OLD="$(git -C "$REPO_ROOT" rev-parse HEAD)"
 if [ -n "$DIRTY" ]; then
   echo "skip: working tree has uncommitted changes — not pulling $BRANCH"
 elif git -C "$REPO_ROOT" rev-parse --abbrev-ref --symbolic-full-name @{u} >/dev/null 2>&1; then
-  git -C "$REPO_ROOT" pull --ff-only 2>&1 | tail -2 || echo "skip: $BRANCH has diverged — left untouched"
+  # NB: don't pipe the pull — a pipe's exit code is the last stage (tail), which
+  # always succeeds, so a real `|| echo` flag would be dead code.
+  if git -C "$REPO_ROOT" pull --ff-only >/dev/null 2>&1; then
+    echo "pulled: $BRANCH (fast-forward)"
+  else
+    echo "skip: $BRANCH has diverged — left untouched"
+  fi
 fi
 ```
 
@@ -108,7 +115,7 @@ If `BRANCH` == `MAIN`, step 3 already covered it. Otherwise update the local
 
 ```bash
 if [ "$BRANCH" != "$MAIN" ]; then
-  git -C "$REPO_ROOT" fetch origin "$MAIN:$MAIN" 2>&1 | tail -1 \
+  git -C "$REPO_ROOT" fetch origin "$MAIN:$MAIN" >/dev/null 2>&1 \
     || echo "note: local $MAIN didn't fast-forward (has its own commits) — using origin/$MAIN for the summary"
 fi
 ```
@@ -136,8 +143,13 @@ Render compactly. Examples of the *right altitude*:
 If nothing: a single line *"`main`: nothing new since your last commit."* — or drop
 it if you're already saying a lot.
 
-**What changed on your branch** (if not `MAIN`): note new commits that arrived, or
-"your branch is unchanged since you left." One or two lines.
+**What changed on your branch** (if not `MAIN`): list what arrived in the pull.
+
+```bash
+git -C "$REPO_ROOT" log "$BR_OLD"..HEAD --oneline 2>/dev/null | head -20
+```
+
+If empty: "your branch is unchanged since you left." One or two lines — no dump.
 
 ### 6. Branch status — merged? open PR? (needs `gh`)
 
@@ -161,17 +173,23 @@ the anchor; otherwise a terse count, or omit.
 
 ```bash
 SINCE_DATE="${ANCHOR%%T*}"  # gh search wants YYYY-MM-DD
-gh pr list  --state merged --search "merged:>=$SINCE_DATE" --json title,url,author -q '.[]' 2>/dev/null | head
-gh issue list --state all --search "created:>=$SINCE_DATE" --json number -q '.[]' 2>/dev/null | wc -l
-gh release list --limit 5 2>/dev/null | head
+# PRs merged since the anchor
+gh pr list --state merged --search "merged:>=$SINCE_DATE" --limit 50 --json title,url,author -q '.[]' 2>/dev/null
+# Issue deltas — new vs closed (two queries; --limit so the count isn't capped at 30)
+gh issue list --state all    --search "created:>=$SINCE_DATE" --limit 200 --json number -q '.[]' 2>/dev/null | wc -l
+gh issue list --state closed --search "closed:>=$SINCE_DATE"  --limit 200 --json number -q '.[]' 2>/dev/null | wc -l
+# Releases — list carries no author; attribute a notable one separately
+gh release list --limit 5 2>/dev/null
+# gh release view <tag> --json author,name,publishedAt   # only for a notable release
 ```
 
 - **PRs:** name a merged PR + author only if it's a sizable/feature one; else
   "3 PRs merged, 2 opened" or nothing.
-- **Issues:** terse only — e.g. *"5 new issues, 8 closed."* Highlight one only if
-  it's clearly major.
-- **Releases (GitHub Releases):** mention a new release/tag since the anchor with
-  its name (and author if notable); otherwise omit.
+- **Issues:** terse only — e.g. *"5 new issues, 8 closed."* (the two counts
+  above). Highlight one only if it's clearly major.
+- **Releases (GitHub Releases):** mention a new release/tag whose `publishedAt` is
+  ≥ the anchor (`gh release list` has no date filter — eyeball it). For a notable
+  one, attribute the author via `gh release view <tag> --json author`. Else omit.
 
 ### 8. Build (auto-detect, non-blocking)
 

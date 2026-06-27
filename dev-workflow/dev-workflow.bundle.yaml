@@ -1,0 +1,4 @@
+name: dev-workflow
+description: Everyday developer-routine skills — daily kick-off, sync, and catch-up
+dependencies:
+  - skill:good-morning

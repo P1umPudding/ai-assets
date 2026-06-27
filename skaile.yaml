@@ -24,5 +24,9 @@ assets:
   - { kind: skill,  name: write-spec, root: planning/skills/write-spec }
   - { kind: bundle, name: planning, root: planning, files: [planning.bundle.yaml] }
 
+  # ── dev-workflow ──────────────────────────────────────────────────────────
+  - { kind: skill,  name: good-morning, root: dev-workflow/skills/good-morning }
+  - { kind: bundle, name: dev-workflow, root: dev-workflow, files: [dev-workflow.bundle.yaml] }
+
   # Add new domains/skills above. Or just drop a SKILL.md under
   # <domain>/skills/<name>/ and let auto-discovery pick it up.

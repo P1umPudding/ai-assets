@@ -30,6 +30,13 @@ verify its own work. **You do not implement.** Your only deliverable is the spec
   resolve dependencies between decisions one by one.
 - **Lock key decisions explicitly.** Before writing, replay the decisions you've
   settled and have the user confirm them, so nothing is silently assumed.
+- **Be concrete; decide now, don't defer.** Everything that's been decided goes
+  into the spec in specific terms — exact names, values, copy, states, data
+  shapes, behavior. Leave nothing to the planner's or implementer's imagination.
+  *You* are the one interviewing, so when you're unsure how something should be,
+  that's a question for the user **now** — don't punt the decision downstream. The
+  only thing you leave open is the code-level HOW (which files/functions, in what
+  order); that's the implementer's job. Everything else: pin it down.
 - **Tailor everything to THIS environment.** The verification plan must use the
   tools that actually exist here — real commands, real test files, real URLs.
 - Interview in the user's language; write the spec in the repo's documentation
@@ -134,8 +141,12 @@ gets verified).
   function-by-function code plan. The spec defines WHAT and the acceptance
   criteria; deciding the exact code-level HOW is the implementer's job
   (Implementation Workflow, step 1). If the user wants to build, point them there.
-- **Never invent** commands, paths, components, or test tooling. If you didn't
-  confirm it exists in Orient, don't put it in the spec.
+- **Don't fabricate what exists; do design what's new.** Never state as fact
+  something about the *current* codebase you didn't verify in Orient — existing
+  commands, paths, components, or test tooling. But you absolutely *may* invent
+  and propose *new* things the feature needs (a new component, command, endpoint,
+  or approach). When you do: confirm the shape with the user, then write it into
+  the spec concretely — name, behavior, interface, defaults — so the implementer
+  builds what you specified instead of re-deciding it. Just keep the two visibly
+  separate: what already exists vs. what this spec introduces.
 - **The spec must be self-contained.** Assume the implementer gets only this file.
-- Keep this body lean; the full artifact format lives in
-  `references/spec-template.md`.

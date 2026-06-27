@@ -10,6 +10,13 @@ Context, and Requirements can each grow to many paragraphs with their own
 sub-headings (`###`) for a large spec, or stay a few lines for a small one. Add
 sub-structure freely; the only rule is that it stays readable and self-contained.
 
+**Write every decision down concretely** — exact names, values, copy, states,
+data shapes, behavior. The implementer should never have to guess or invent a
+product/design decision; the only thing left open is the code-level HOW (which
+files/functions, in what order). Where this spec introduces something *new*
+(a new component, command, endpoint), specify it fully and keep it visibly
+distinct from what already exists.
+
 ---
 
 # Spec — <Feature / Project name>

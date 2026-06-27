@@ -33,8 +33,8 @@ scripts/                          ← uv-runnable scaffolders
 └── skills/<skill-name>/SKILL.md  ← the skill (required); + optional CLI.md, references/, scripts/
 ```
 
-`general/` ships as a starter domain with `example-skill/` as a working
-template — read it, then delete it once you have real skills.
+Shipped domains so far: `planning/` (`write-spec`) and `dev-workflow/`
+(`good-morning`) — read either skill for a worked example of the layout.
 
 ## Publishing to skaile.store
 

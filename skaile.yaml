@@ -16,10 +16,6 @@ publisher: plumpudding
 # `<domain>/<domain>.bundle.yaml`) — so you don't have to register every skill.
 # Add an entry here only when you want an asset's identity pinned.
 assets:
-  # ── general ───────────────────────────────────────────────────────────────
-  - { kind: skill,  name: example-skill, root: general/skills/example-skill }
-  - { kind: bundle, name: general, root: general, files: [general.bundle.yaml] }
-
   # ── planning ──────────────────────────────────────────────────────────────
   - { kind: skill,  name: write-spec, root: planning/skills/write-spec }
   - { kind: bundle, name: planning, root: planning, files: [planning.bundle.yaml] }

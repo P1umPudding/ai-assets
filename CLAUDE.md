@@ -24,8 +24,8 @@ bits are the `uv`-runnable scaffolders in `scripts/`.
 | `contract` | `<domain>/contracts/<name>/CONTRACT.md`   | `contract:<name>@plumpudding`     |
 
 Everything ships from a **domain** folder. Even a single skill needs a domain
-to live in. `general/` is the catch-all; promote a cluster of related skills
-into its own domain when it grows.
+to live in. Group related skills into a domain, and spin up a new one when a
+cluster grows (scaffold with `scripts/scaffold_domain.py`).
 
 ## Golden rules
 
@@ -91,8 +91,11 @@ metadata:
 ---
 ```
 
-Body convention: imperative mood, **Role / Reads / Writes / Must / Never**
-sections. See `general/skills/example-skill/SKILL.md` for the canonical shape.
+Body convention: imperative mood; lead with the agent's **role**, then its
+procedure and the hard rules (a **Role / Reads / Writes / Must / Never** shape
+works well for tool-like skills; a **principles / procedure / hard-rules** shape
+fits procedural ones). See `planning/skills/write-spec/SKILL.md` and
+`dev-workflow/skills/good-morning/SKILL.md` for worked examples.
 
 ### Domain anatomy
 

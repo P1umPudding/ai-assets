@@ -50,12 +50,17 @@ persona.
 
 ## Procedure
 
+Run the blocks below in **one shell session** — later steps reuse variables set in
+step 1 (`REPO_ROOT`, `BRANCH`, `MAIN`, `ANCHOR`, `BR_OLD`, …). If you run them in
+separate shells, substitute the literal values instead.
+
 ### 1. Orient (silent — gather facts, don't print them raw)
 
 ```bash
 REPO_ROOT="$(git rev-parse --show-toplevel)" || { echo "Not a git repo."; exit 1; }
 BRANCH="$(git -C "$REPO_ROOT" rev-parse --abbrev-ref HEAD)"
-EMAIL="$(git -C "$REPO_ROOT" config user.email)"
+[ "$BRANCH" = HEAD ] && DETACHED=1   # detached HEAD — don't offer a normal switch later
+EMAIL="$(git -C "$REPO_ROOT" config user.email)"   # NB: --author below is a regex; a '+' in the email just falls through to the 48h default (safe)
 NAME="$(git -C "$REPO_ROOT" config user.name | awk '{print $1}')"; NAME="${NAME:-there}"
 
 # Main dev branch: origin/HEAD → gh default → main/master fallback
@@ -76,7 +81,8 @@ ANCHOR=""
 DIRTY="$(git -C "$REPO_ROOT" status --porcelain)"
 ```
 
-Keep `REPO_ROOT`, `BRANCH`, `MAIN`, `EMAIL`, `NAME`, `ANCHOR`, `DIRTY` for later.
+Keep `REPO_ROOT`, `BRANCH`, `MAIN`, `EMAIL`, `NAME`, `ANCHOR`, `DIRTY`, `DETACHED`
+for later.
 
 ### 2. Fetch
 
@@ -84,7 +90,8 @@ Keep `REPO_ROOT`, `BRANCH`, `MAIN`, `EMAIL`, `NAME`, `ANCHOR`, `DIRTY` for later
 git -C "$REPO_ROOT" fetch --all --prune --tags 2>&1 | tail -3
 ```
 
-No remote / fetch fails → note it in one line and continue with local state only.
+If the output shows an error (no remote, auth, network) → note it in one line and
+continue with local state only.
 
 ### 3. Pull the current branch (fast-forward only, safe)
 
@@ -130,8 +137,9 @@ conventional-commit prefix; show counts + a few highlights, author named only fo
 notable ones:
 
 ```bash
-git -C "$REPO_ROOT" log "origin/$MAIN" --since="$ANCHOR" --no-merges \
-  --format='%h%x09%an%x09%s' | head -40
+# Fall back to the local branch if origin/$MAIN doesn't resolve (no remote / odd origin)
+REF="origin/$MAIN"; git -C "$REPO_ROOT" rev-parse -q --verify "$REF^{commit}" >/dev/null 2>&1 || REF="$MAIN"
+git -C "$REPO_ROOT" log "$REF" --since="$ANCHOR" --no-merges --format='%h%x09%an%x09%s' | head -40
 ```
 
 Render compactly. Examples of the *right altitude*:
@@ -175,9 +183,10 @@ the anchor; otherwise a terse count, or omit.
 SINCE_DATE="${ANCHOR%%T*}"  # gh search wants YYYY-MM-DD
 # PRs merged since the anchor
 gh pr list --state merged --search "merged:>=$SINCE_DATE" --limit 50 --json title,url,author -q '.[]' 2>/dev/null
-# Issue deltas — new vs closed (two queries; --limit so the count isn't capped at 30)
-gh issue list --state all    --search "created:>=$SINCE_DATE" --limit 200 --json number -q '.[]' 2>/dev/null | wc -l
-gh issue list --state closed --search "closed:>=$SINCE_DATE"  --limit 200 --json number -q '.[]' 2>/dev/null | wc -l
+# Issue deltas — new vs closed. `-q 'length'` returns one number (robust regardless
+# of how gh formats objects); --limit lifts the default-30 cap.
+gh issue list --state all    --search "created:>=$SINCE_DATE" --limit 200 --json number -q 'length' 2>/dev/null
+gh issue list --state closed --search "closed:>=$SINCE_DATE"  --limit 200 --json number -q 'length' 2>/dev/null
 # Releases — list carries no author; attribute a notable one separately
 gh release list --limit 5 2>/dev/null
 # gh release view <tag> --json author,name,publishedAt   # only for a notable release
@@ -197,7 +206,7 @@ Detect a build command from the repo; run it only if found; report the result in
 **one line**. A failure is flagged, never a stop.
 
 ```bash
-cd "$REPO_ROOT"
+cd "$REPO_ROOT" || exit
 PM=npm
 [ -f bun.lockb ] || [ -f bun.lock ] && PM=bun
 [ -f pnpm-lock.yaml ] && PM=pnpm
@@ -234,6 +243,10 @@ their changes.
 so a quick reply works — no tool call:
 
 > You're on `feature-x`, not `main`. Want me to switch you over? Just say the word.
+
+**If `DETACHED=1`** (detached HEAD, not a branch) → don't offer a normal switch.
+Fold "you're in detached HEAD" into the Heads-up and, if useful, offer to put them
+on `MAIN` instead — but never imply they're on a branch they're not.
 
 **Closing block shape:**
 
